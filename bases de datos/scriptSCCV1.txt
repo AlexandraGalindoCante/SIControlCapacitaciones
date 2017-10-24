@@ -1,0 +1,581 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema dbcontrolcapacitacion
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `dbcontrolcapacitacion` ;
+
+-- -----------------------------------------------------
+-- Schema dbcontrolcapacitacion
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `dbcontrolcapacitacion` DEFAULT CHARACTER SET latin1 ;
+USE `dbcontrolcapacitacion` ;
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`programacion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`programacion` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`programacion` (
+  `idProgramacion` INT(10) NOT NULL AUTO_INCREMENT,
+  `fechaInicio` DATE NOT NULL,
+  `fechaFin` DATE NOT NULL,
+  `tipoModulo` VARCHAR(45) NULL DEFAULT NULL,
+  `resultCapacitador` VARCHAR(45) NULL DEFAULT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  `tipoCapacitacion` VARCHAR(45) NOT NULL,
+  `Modalidad` VARCHAR(45) NOT NULL,
+  `nivelCapacitacion` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idProgramacion`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`tipocontrato`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`tipocontrato` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`tipocontrato` (
+  `idtipoContrato` INT(10) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idtipoContrato`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`contrato`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`contrato` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`contrato` (
+  `idContrato` INT(11) NOT NULL AUTO_INCREMENT,
+  `numContrato` VARCHAR(45) NULL DEFAULT NULL,
+  `fechaInicioLaboral` DATE NULL DEFAULT NULL,
+  `fechaTerminacionContrato` DATE NULL DEFAULT NULL,
+  `tipoContrato_idtipoContrato` INT(11) NULL DEFAULT NULL,
+  `empresa` VARCHAR(45) NULL DEFAULT NULL,
+  `visibilidad` TINYINT(1) NULL DEFAULT NULL,
+  PRIMARY KEY (`idContrato`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = latin1;
+
+CREATE UNIQUE INDEX `numContrato` ON `dbcontrolcapacitacion`.`contrato` (`numContrato` ASC);
+
+CREATE INDEX `fk_Contrato_tipoContrato1_idx` ON `dbcontrolcapacitacion`.`contrato` (`tipoContrato_idtipoContrato` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`departamento`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`departamento` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`departamento` (
+  `idDepartamento` INT(10) NOT NULL AUTO_INCREMENT,
+  `area` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idDepartamento`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`tiponivelescolar`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`tiponivelescolar` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`tiponivelescolar` (
+  `idtipoNivelEscolar` INT(10) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NOT NULL,
+  `descripcion` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idtipoNivelEscolar`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`empleado`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`empleado` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`empleado` (
+  `documento` VARCHAR(45) NOT NULL,
+  `nombreCompleto` VARCHAR(45) NOT NULL,
+  `telefono` VARCHAR(45) NOT NULL,
+  `correoElectronico` VARCHAR(45) NOT NULL,
+  `Departamento_idDepartamento` INT(11) NOT NULL,
+  `Contrato_idContrato` INT(11) NOT NULL,
+  `TipoNivelEscolar_idtipoNivelEscolar` INT(11) NOT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`documento`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE INDEX `fk_Empleado_Contrato1_idx` ON `dbcontrolcapacitacion`.`empleado` (`Contrato_idContrato` ASC);
+
+CREATE INDEX `fk_Empleado_TipoNivelEscolar1_idx` ON `dbcontrolcapacitacion`.`empleado` (`TipoNivelEscolar_idtipoNivelEscolar` ASC);
+
+CREATE INDEX `fk_Empleado_Departamento1_idx` ON `dbcontrolcapacitacion`.`empleado` (`Departamento_idDepartamento` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`evaluacion`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`evaluacion` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`evaluacion` (
+  `idEvaluacion` INT(10) NOT NULL AUTO_INCREMENT,
+  `estado` VARCHAR(45) NULL DEFAULT NULL,
+  `observaciones` VARCHAR(100) NULL DEFAULT NULL,
+  `calificacion` INT(10) NOT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`idEvaluacion`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`asigempleado`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`asigempleado` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`asigempleado` (
+  `idAsigEmpleado` INT(10) NOT NULL AUTO_INCREMENT,
+  `idEmpleado` VARCHAR(45) NULL DEFAULT NULL,
+  `idProgramacion` INT(10) NULL DEFAULT NULL,
+  `evaluacion_idEvaluacion` INT(10) NOT NULL,
+  PRIMARY KEY (`idAsigEmpleado`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE INDEX `fk_idAsigEmpleado_idEmpleado1_idx` ON `dbcontrolcapacitacion`.`asigempleado` (`idEmpleado` ASC);
+
+CREATE INDEX `fk_AsigEmpleado_idProgramacion1_idx` ON `dbcontrolcapacitacion`.`asigempleado` (`idProgramacion` ASC);
+
+CREATE INDEX `fk_asigempleado_evaluacion1_idx` ON `dbcontrolcapacitacion`.`asigempleado` (`evaluacion_idEvaluacion` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`modulo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`modulo` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`modulo` (
+  `idModulo` INT(10) NOT NULL AUTO_INCREMENT,
+  `nombreModulo` VARCHAR(45) NOT NULL,
+  `frecuencia` INT(11) NULL DEFAULT NULL,
+  `descripcion` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`idModulo`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE UNIQUE INDEX `nombreModulo` ON `dbcontrolcapacitacion`.`modulo` (`nombreModulo` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`tema`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`tema` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`tema` (
+  `idTema` INT(10) NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(45) NULL DEFAULT NULL,
+  `descripcion` VARCHAR(100) NULL DEFAULT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`idTema`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE UNIQUE INDEX `nombre` ON `dbcontrolcapacitacion`.`tema` (`nombre` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`asigtema`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`asigtema` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`asigtema` (
+  `idAsigTema` INT(10) NOT NULL AUTO_INCREMENT,
+  `idModulo` INT(10) NULL DEFAULT NULL,
+  `idTema` INT(10) NULL DEFAULT NULL,
+  PRIMARY KEY (`idAsigTema`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE INDEX `fk_AsigTema_idModulo1_idx` ON `dbcontrolcapacitacion`.`asigtema` (`idModulo` ASC);
+
+CREATE INDEX `fk_AsigTema_idTema1_idx` ON `dbcontrolcapacitacion`.`asigtema` (`idTema` ASC);
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`capacitador`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`capacitador` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`capacitador` (
+  `documento` VARCHAR(45) NOT NULL,
+  `nombreCapacitador` VARCHAR(45) NULL DEFAULT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`documento`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`usuario`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`usuario` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`usuario` (
+  `numeroDocumento` VARCHAR(45) NOT NULL,
+  `nombreUsuario` VARCHAR(45) NOT NULL,
+  `contrasena` VARCHAR(45) NOT NULL,
+  `visibilidad` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`numeroDocumento`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `dbcontrolcapacitacion`.`asignarModulo`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`asignarModulo` ;
+
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`asignarModulo` (
+  `idasignarModulo` INT NOT NULL,
+  `programacion_idProgramacion` INT(10) NOT NULL,
+  `modulo_idModulo` INT(10) NOT NULL,
+  `capacitador_documento` VARCHAR(45) NOT NULL,
+  `calificacionCapacitador` VARCHAR(45) NULL)
+ENGINE = InnoDB;
+
+CREATE INDEX `fk_asignarModulo_programacion1_idx` ON `dbcontrolcapacitacion`.`asignarModulo` (`programacion_idProgramacion` ASC);
+
+CREATE INDEX `fk_asignarModulo_modulo1_idx` ON `dbcontrolcapacitacion`.`asignarModulo` (`modulo_idModulo` ASC);
+
+CREATE INDEX `fk_asignarModulo_capacitador1_idx` ON `dbcontrolcapacitacion`.`asignarModulo` (`capacitador_documento` ASC);
+
+USE `dbcontrolcapacitacion` ;
+
+-- -----------------------------------------------------
+-- Placeholder table for view `dbcontrolcapacitacion`.`cargarempleado`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `dbcontrolcapacitacion`.`cargarempleado` (`nombreCompleto` INT, `documento` INT, `telefono` INT, `correoElectronico` INT, `fechaInicioLaboral` INT, `fechaTerminacionContrato` INT, `empresa` INT, `numContrato` INT, `Tipocontrato` INT, `area` INT, `nivelEscolar` INT);
+
+-- -----------------------------------------------------
+-- procedure actualizarEmpleado
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`actualizarEmpleado`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarEmpleado`(
+ _documento INT(10),
+_nombreCompleto VARCHAR(45),
+_telefono VARCHAR(45),
+_correo VARCHAR(45),
+_departamento int(10),
+_tipoNivelEscolar int(10),
+_tipoContrato INT(10),
+_fechaInicio DATE,
+_fechaFin DATE,
+_empresa VARCHAR(45)
+)
+BEGIN
+
+	UPDATE Contrato  SET 
+    TipoContrato_idTipoContrato=_tipocontrato,
+    fechaInicioLaboral=_fechaInicio, 
+    fechaTerminacionContrato=_fechaFin,
+    empresa =_empresa
+    WHERE idContrato = (SELECT Contrato_idContrato FROM Empleado WHERE documento = _documento);
+    
+	UPDATE Empleado SET 
+    nombreCompleto=_nombreCompleto,
+    telefono=_telefono,correoElectronico=_correo,
+    Departamento_idDepartamento=_departamento,
+    tipoNivelEscolar_idTipoNivelEscolar=_tipoNivelEscolar
+    WHERE documento=_documento;
+    
+    
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure actualizarModulo
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`actualizarModulo`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `actualizarModulo`(
+_idModulo INT (10),
+_nombreModulo VARCHAR(45),
+_frecuencia INT(10),
+_descripcion VARCHAR (200))
+BEGIN
+	UPDATE  MODULO SET nombreModulo=_nombreModulo,frecuencia=_frecuencia,descripcion=_descripcion
+    WHERE idModulo=_idModulo;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure asignarCapacitador
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`asignarCapacitador`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `asignarCapacitador`(
+_idCapacitador int(10),
+_idProgramacion int(10))
+BEGIN
+INSERT INTO AsigCapacitador(idCapacitador,idProgramacion)VALUES(_idCapacitador,_idProgramacion);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure asignarTema
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`asignarTema`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `asignarTema`(
+_idTema int(10),
+_idModulo int(10))
+BEGIN
+	
+    insert into AsigTema(idModulo,idTema)VALUES(_idTema,_idModulo);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure crearCapacitador
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`crearCapacitador`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearCapacitador`(
+_documento int(10),
+_nombre VARCHAR(45))
+BEGIN
+	
+    INSERT INTO capacitador(documento,nombreCapacitador)VALUES(_documento,_nombre);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure crearModulo
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`crearModulo`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearModulo`(
+_nombreModulo VARCHAR(45),
+_frecuencia INT(10),
+_descripcion VARCHAR (200))
+BEGIN
+	INSERT INTO modulo (nombreModulo,frecuencia,descripcion) VALUES(_nombreModulo,__frecuencia,_descripcion);
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure crearTema
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`crearTema`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `crearTema`(
+_nombre varchar(45),
+_estado varchar(45),
+descripcion varchar(250))
+BEGIN
+	INSERT INTO TEMA (nombre,estado,descripcion) VALUES(_nombre,_estado,_descripcion);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure eliminarCapacitador
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`eliminarCapacitador`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarCapacitador`(
+_documento int(10))
+BEGIN
+	
+   DELETE Capacitador from Capacitador where documento=_documento;
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure eliminarModulo
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`eliminarModulo`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarModulo`(
+_idModulo INT(10))
+BEGIN
+	DELETE  MODULO 
+    FROM    MODULO 
+    WHERE idModulo=_idModulo;
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure eliminarTema
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`eliminarTema`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `eliminarTema`(
+_idTema int(10))
+BEGIN
+	delete TEMA from Tema 
+    WHERE idTema=_idTema;
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure inhabilitarEmpleado
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`inhabilitarEmpleado`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `inhabilitarEmpleado`(
+_documento VARCHAR(45))
+BEGIN
+
+  UPDATE empleado set visibilidad=0 
+  where documento=_documento;
+  Update contrato set visibilidad = 0
+ where Idcontrato = ( select contrato_idContrato from empleado where documento = _documento);
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure modificarTema
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`modificarTema`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `modificarTema`(
+_idTema int(10),
+_nombre varchar(45),
+_estado varchar(45),
+descripcion varchar(250))
+BEGIN
+	INSERT INTO TEMA (nombre,estado,descripcion) VALUES(_nombre,_estado,_descripcion);
+
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- procedure registrarEmpleado
+-- -----------------------------------------------------
+
+USE `dbcontrolcapacitacion`;
+DROP procedure IF EXISTS `dbcontrolcapacitacion`.`registrarEmpleado`;
+
+DELIMITER $$
+USE `dbcontrolcapacitacion`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `registrarEmpleado`(
+_documento VARCHAR(45),
+_nombreCompleto VARCHAR(45),
+_telefono VARCHAR(45),
+_correoElectronico VARCHAR(45),
+_tipoNivelEscolar int(10),
+_tipoContrato INT(10),
+_fechaInicioLaboral DATE,
+_fechaTerminacionContrato DATE,
+_idDepartamento int(10),
+_empresa VARCHAR(45),
+_numContrato VARCHAR (45))
+BEGIN
+
+	INSERT INTO Contrato(numContrato,fechaInicioLaboral,fechaTerminacionContrato,tipoContrato_idtipoContrato,empresa,visibilidad)
+    VALUES(_numContrato,_fechaInicioLaboral,_fechaTerminacionContrato,_tipocontrato,_empresa,1);
+
+	INSERT INTO Empleado(documento,nombreCompleto,telefono,correoElectronico,departamento_idDepartamento,Contrato_idContrato,tipoNivelEscolar_idtipoNivelEscolar,visibilidad) VALUES
+    (_documento,_nombreCompleto,_telefono,_correoElectronico,_idDepartamento,(select contrato.idContrato FROM Contrato WHERE contrato.numContrato =_numContrato),_tipoNivelEscolar,1);
+
+    
+    
+END$$
+
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- View `dbcontrolcapacitacion`.`cargarempleado`
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS `dbcontrolcapacitacion`.`cargarempleado` ;
+DROP TABLE IF EXISTS `dbcontrolcapacitacion`.`cargarempleado`;
+USE `dbcontrolcapacitacion`;
+CREATE  OR REPLACE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `dbcontrolcapacitacion`.`cargarempleado` AS select `dbcontrolcapacitacion`.`empleado`.`nombreCompleto` AS `nombreCompleto`,`dbcontrolcapacitacion`.`empleado`.`documento` AS `documento`,`dbcontrolcapacitacion`.`empleado`.`telefono` AS `telefono`,`dbcontrolcapacitacion`.`empleado`.`correoElectronico` AS `correoElectronico`,`dbcontrolcapacitacion`.`contrato`.`fechaInicioLaboral` AS `fechaInicioLaboral`,`dbcontrolcapacitacion`.`contrato`.`fechaTerminacionContrato` AS `fechaTerminacionContrato`,`dbcontrolcapacitacion`.`contrato`.`empresa` AS `empresa`,`dbcontrolcapacitacion`.`contrato`.`numContrato` AS `numContrato`,`dbcontrolcapacitacion`.`tipocontrato`.`nombre` AS `Tipocontrato`,`dbcontrolcapacitacion`.`departamento`.`area` AS `area`,`dbcontrolcapacitacion`.`tiponivelescolar`.`nombre` AS `nivelEscolar` from ((((`dbcontrolcapacitacion`.`empleado` join `dbcontrolcapacitacion`.`contrato` on((`dbcontrolcapacitacion`.`empleado`.`Contrato_idContrato` = `dbcontrolcapacitacion`.`contrato`.`idContrato`))) join `dbcontrolcapacitacion`.`departamento` on((`dbcontrolcapacitacion`.`departamento`.`idDepartamento` = `dbcontrolcapacitacion`.`empleado`.`Departamento_idDepartamento`))) join `dbcontrolcapacitacion`.`tiponivelescolar` on((`dbcontrolcapacitacion`.`tiponivelescolar`.`idtipoNivelEscolar` = `dbcontrolcapacitacion`.`empleado`.`TipoNivelEscolar_idtipoNivelEscolar`))) join `dbcontrolcapacitacion`.`tipocontrato` on((`dbcontrolcapacitacion`.`tipocontrato`.`idtipoContrato` = `dbcontrolcapacitacion`.`contrato`.`tipoContrato_idtipoContrato`))) where (`dbcontrolcapacitacion`.`empleado`.`visibilidad` = '1') order by `dbcontrolcapacitacion`.`empleado`.`nombreCompleto`;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
